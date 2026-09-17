@@ -1,0 +1,28 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: order-service
+
+  kafka:
+    bootstrap-servers: localhost:9092
+
+    producer:
+      # Key = orderId → StringSerializer
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      # Value = OrderCreatedEvent → JSON
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      # Đảm bảo không mất message khi broker rebalance
+      acks: all
+      retries: 3
+      properties:
+        # Không đính kèm Spring type header vào message
+        # → consumer không cần phụ thuộc vào class của producer
+        spring.json.add.type.headers: false
+
+logging:
+  level:
+    org.example.orderservice: DEBUG
+    org.apache.kafka: WARN
+    org.springframework.kafka: INFO
